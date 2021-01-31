@@ -32,6 +32,8 @@
     "oidc-client": "^1.10.1",
     "rxjs": "~6.5.5",
     "tslib": "^2.1.0",
+    "vis-data": "^7.1.2",
+    "vis-network": "^9.0.0",
     "zone.js": "~0.10.3"
   },
   "devDependencies": {

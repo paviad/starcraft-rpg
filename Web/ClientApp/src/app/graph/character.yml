@@ -1,0 +1,8 @@
+character:
+  abilities:
+    - strength:
+        modifiers:
+          - path: "$.weapons"
+  weapons:
+    - unarmed:
+        accuracy: 3

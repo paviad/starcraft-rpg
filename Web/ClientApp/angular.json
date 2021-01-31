@@ -35,7 +35,8 @@
             ],
             "scripts": [
               "node_modules/jsuites/dist/jsuites.js",
-              "node_modules/jexcel/dist/jexcel.js"
+              "node_modules/jexcel/dist/jexcel.js",
+              "node_modules/vis-network/dist/vis-network.min.js"
             ]
           },
           "configurations": {

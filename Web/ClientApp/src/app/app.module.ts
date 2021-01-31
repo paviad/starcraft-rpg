@@ -9,6 +9,8 @@ import { CallbackComponent } from './callback/callback.component';
 import { HomeComponent } from './home/home.component';
 import { AuthInterceptorService } from './auth-interceptor.service';
 import { JexcelDirective } from './jexcel.directive';
+import { GraphComponent } from './graph/graph.component';
+import { VisjsDirective } from './visjs.directive';
 
 let currentBackendState: BackendState;
 
@@ -17,7 +19,9 @@ let currentBackendState: BackendState;
     AppComponent,
     CallbackComponent,
     HomeComponent,
-    JexcelDirective
+    JexcelDirective,
+    GraphComponent,
+    VisjsDirective
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),

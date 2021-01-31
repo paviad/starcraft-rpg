@@ -1,0 +1,3 @@
+<input #flt type="text" (input)="setFilter(flt.value)">{{filter}}
+<div id="mynetwork" #v="visjs" visjs [nodes]="nodes" [edges]="edges" [filter]="filter"></div>
+<button (click)="test()">test()</button>
