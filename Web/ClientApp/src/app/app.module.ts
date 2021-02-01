@@ -11,6 +11,9 @@ import { AuthInterceptorService } from './auth-interceptor.service';
 import { JexcelDirective } from './jexcel.directive';
 import { GraphComponent } from './graph/graph.component';
 import { VisjsDirective } from './visjs.directive';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { MatInputModule } from '@angular/material/input';
 
 let currentBackendState: BackendState;
 
@@ -27,7 +30,9 @@ let currentBackendState: BackendState;
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     HttpClientModule,
     BrowserTransferStateModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatInputModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },

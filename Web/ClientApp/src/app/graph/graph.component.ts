@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { VisjsDirective } from '../visjs.directive';
@@ -12,32 +12,19 @@ declare var vis: any;
 })
 export class GraphComponent implements OnInit {
   @ViewChild('v') v: VisjsDirective;
+  @ViewChild('flt') filterText: ElementRef;
 
   flt$ = new Subject<string>();
   filter: string = null;
 
-  character: {
-    mountainStrike: {
-      name: 'Talent: Mountain Strike I',
-      accuracy: 2,
-    },
-    unarmed: {
-      accuracy: {
-      },
-      numberOfAttacks: {
-        accuracy: 12,
-      },
-    },
-  };
-
   nodes = [
-    { id: 'accuracy', label: 'Accuracy\n24' },
+    { id: 'accuracy', label: 'Unarmed\nAccuracy\n24', title: 'sfasfsadf' },
     { id: 'talent/mountain strike i', label: 'Talent\nMountain Strike I' },
     { id: 'weapon/unarmed/number of attacks', label: '# of Attacks\n4' },
     { id: 'talent/swift strike', label: 'Talent\nSwift Strike' },
     { id: 'skill/melee', label: 'Skill\nMelee\n6' },
 
-    { id: 'weapon/unarmed/damage', label: 'Damage\nBase: 15\n27' },
+    { id: 'weapon/unarmed/damage', label: 'Unarmed\nDamage\nBase: 15\n27' },
     { id: 'talent/military unarmed training ii', label: 'Talent\nMilitary Unarmed Training II' },
     { id: 'ability/strength', label: 'Ability\nStrength\n8' },
     { id: 'specialization/soldier', label: 'Specialization\nSoldier' },
@@ -48,13 +35,7 @@ export class GraphComponent implements OnInit {
     { id: 'armor/cmc-300 powered combat armor', label: 'Armor\nCMC-300', color: 'rgb(0,155,0)' },
 
     { id: 'ability/instinct', label: 'Ability\nInstinct\n3' },
-
-    // { id: 1, label: 'something\n3' },
-    // { id: 2, label: 'something\n4' },
-    // { id: 3, label: 'X\n12' },
   ];
-
-  // nodes = new vis.DataSet(this.nodeData);
 
   edges = [
     { from: 'talent/mountain strike i', to: 'accuracy', label: '+2' },
@@ -73,17 +54,12 @@ export class GraphComponent implements OnInit {
 
     { from: 'race/terran', to: 'ability/instinct', label: '+2' },
     { from: 'specialization/soldier', to: 'ability/instinct', label: '+1' },
-
-    { from: 1, to: 3, label: '3' },
-    { from: 2, to: 3, label: '4' },
   ];
-
-  // edges = new vis.DataSet(this.edgeData);
 
   constructor() { }
 
   ngOnInit(): void {
-    this.flt$.pipe(debounceTime(200)).subscribe(r => this.filter = r);
+    this.flt$.pipe(debounceTime(150)).subscribe(r => this.filter = r);
   }
 
   test(): void {
@@ -92,5 +68,36 @@ export class GraphComponent implements OnInit {
 
   setFilter(flt: string): void {
     this.flt$.next(flt);
+  }
+
+  filterByNode(n): void {
+    const txt = n.label.replace(/\s+/g, ' ');
+    this.filter = txt;
+    this.filterText.nativeElement.value = txt;
+  }
+
+  drop(e: DragEvent): void {
+    console.log('drop', e);
+
+    const files = Array.from(e.dataTransfer.files);
+
+    for (const f of files) {
+      console.log('file', f);
+      const reader = new FileReader();
+      reader.onload = ez => {
+        console.log('text', ez.target.result);
+      };
+      reader.readAsArrayBuffer(f);
+    }
+
+    e.preventDefault();
+  }
+
+  dragEnter(e): void {
+    e.preventDefault();
+  }
+
+  dragOver(e): void {
+    e.preventDefault();
   }
 }

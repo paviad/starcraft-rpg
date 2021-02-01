@@ -1,6 +1,6 @@
-import { AfterViewInit, Directive, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { bufferCount, debounceTime, filter, map } from 'rxjs/operators';
 
 declare var vis: any;
 declare var createNewDataPipeFrom: any;
@@ -14,6 +14,9 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
   @Input() nodes: any[] = [];
   @Input() edges: any[] = [];
   @Input() filter: string = null;
+
+  @Output() dblClickNode = new EventEmitter<any>();
+
   network: any;
 
   nodeData: any;
@@ -24,10 +27,22 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
   pipe: any;
 
   update$ = new Subject<void>();
+  dblclk$ = new Subject<any>();
 
   constructor(private el: ElementRef) {
     this.update$.pipe(debounceTime(200)).subscribe(_ => this.createNetworkInternal());
-    console.log(vis);
+
+    this.dblclk$.pipe(
+      map((r): [number, any] => ([new Date().getTime(), r])),
+      // Emit the last `clickCount` timestamps.
+      bufferCount(2, 1),
+      // `timestamps` is an array the length of `clickCount` containing the last added `timestamps`.
+      filter((timestamps) => {
+        // `timestamps[0]` contains the timestamp `clickCount` clicks ago.
+        // Check if `timestamp[0]` was within the `clickTimespan`.
+        return timestamps[0][0] > new Date().getTime() - 250;
+      })
+    ).subscribe(r => this.dblclick(r[0][1]));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -47,11 +62,7 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
     }
     if (changes.filter) {
       this.pipe.all();
-      console.log('flt', this.filter, this.fltData);
       this.nodeView.refresh();
-      // console.log(this.pipe);
-      // this.pipe.start();
-      // this.fltData.refresh();
     }
   }
 
@@ -63,16 +74,22 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
+  getFilterWords(): string[] {
+    const words = this.filter.match(/\S{2,}|\d/ig);
+    return words;
+  }
+
   highlightFilter(node): any {
-    if (!this.filter) {
+    if (!this.filter || !node.label) {
       return node;
     }
     const rc = { ...node };
-    const esc = this.escapeRegExp(this.filter);
-    const rex = new RegExp(`(${esc})`, 'i');
-    if (node.label) {
-      rc.label = node.label.replace(rex, '<b>$1</b>');
-    }
+    const words = this.getFilterWords();
+    words.forEach(word => {
+      const esc = this.escapeRegExp(word);
+      const rex = new RegExp(`${esc}`, 'i');
+      rc.label = rc.label.replace(rex, '<b>$&</b>');
+    });
     return rc;
   }
 
@@ -80,21 +97,21 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
     if (!this.filter) {
       return true;
     }
-    const flt = this.filter.toLowerCase();
     const lbl: string = node.label.toLowerCase();
-
-    // console.log(node);
 
     const outgoingEdges = this.edges.filter(r => r.from === node.id).map(r => r.to);
     const targetNodes = this.nodes.filter(r => outgoingEdges.includes(r.id)).map(r => r.label.toLowerCase());
     const incomingEdges = this.edges.filter(r => r.to === node.id).map(r => r.from);
     const sourceNodes = this.nodes.filter(r => incomingEdges.includes(r.id)).map(r => r.label.toLowerCase());
 
-    if (lbl.includes(flt) || targetNodes.some(r => r.includes(flt)) || sourceNodes.some(r => r.includes(flt))) {
+    const words = this.getFilterWords().map(r => r.toLowerCase());
+
+    const t = w => words.some(word => w.includes(word));
+
+    if (t(lbl) || targetNodes.some(t) || sourceNodes.some(t)) {
       return true;
     }
 
-    // console.log('omitting', node);
     return false;
   }
 
@@ -109,10 +126,6 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
   private createNetworkInternal(): void {
     const container = this.el.nativeElement;
 
-    // if (!container) {
-    // return;
-    // }
-
     const data = {
       nodes: this.nodeView,
       // nodes: this.fltData,
@@ -121,15 +134,31 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
     const options = {
       edges: {
         arrows: 'to',
-        length: 200,
+        length: 100,
+        smooth: { type: 'dynamic' },
       },
       nodes: {
+        shape: 'box',
+        shadow: true,
         font: {
+          size: 14,
           multi: 'html',
           bold: {
-            color: 'yellow',
+            color: 'brown',
           }
         }
+      },
+      physics: {
+        enabled: true,
+        barnesHut: {
+          theta: 0.5,
+          gravitationalConstant: -6000,
+          centralGravity: 0.6,
+          springLength: 95,
+          springConstant: 0.04,
+          damping: 0.09,
+          avoidOverlap: 0
+        },
       }
     };
     this.network = new vis.Network(container, data, options);
@@ -138,12 +167,18 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
   }
 
   click(params): void {
-    console.log('click', params);
+    this.dblclk$.next(params);
+  }
+
+  dblclick(param): void {
+    const node = this.nodes.find(x => x.id === param.nodes[0]);
+    this.dblClickNode.emit(node);
   }
 
   test(): void {
     this.nodeData.add(
       { id: 'added', label: 'lalala' },
     );
+    this.pipe.all();
   }
 }
