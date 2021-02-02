@@ -11,7 +11,7 @@
     "dev:ssr": "ng run ClientApp:serve-ssr",
     "serve:ssr": "node dist/ClientApp/server/main.js",
     "build:ssr": "ng build --prod && ng run ClientApp:server-aspnet:production",
-    "build:scully": "ng build --prod --base-href /starcraft-rpg",
+    "build:scully": "ng build --prod --base-href /starcraft-rpg --deploy-url /starcraft-rpg",
     "build:ssr:watch": "ng build --watch --prod && ng run ClientApp:server-aspnet:production",
     "prerender": "ng run ClientApp:prerender",
     "scully": "scully && npm run publish:scully",
