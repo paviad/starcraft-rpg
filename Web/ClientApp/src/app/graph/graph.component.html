@@ -6,10 +6,15 @@
         <mat-icon>close</mat-icon>
     </button>
 </mat-form-field>
+<div>
+    <a href="/assets/Sample Character Sheet.xlsx">Download Sample Excel</a>
+</div>
 <div class="container">
     <div id="mynetwork" #v="visjs" visjs [nodes]="nodes" [edges]="edges" [filter]="filter"
         (dblClickNode)="filterByNode($event)" (drop)="drop($event)" (dragenter)="dragEnter($event)"
         (dragover)="dragOver($event)"></div>
-    <div class="prompt"><div *ngIf="!nodes?.length">Drop an Excel File</div></div>
+    <div class="prompt">
+        <div *ngIf="!nodes?.length">Drop an Excel File</div>
+    </div>
 </div>
-<button (click)="test()">test()</button>
+<!-- <button (click)="test()">test()</button> -->
