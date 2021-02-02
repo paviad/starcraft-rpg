@@ -12,7 +12,9 @@
     "serve:ssr": "node dist/ClientApp/server/main.js",
     "build:ssr": "ng build --prod && ng run ClientApp:server-aspnet:production",
     "build:ssr:watch": "ng build --watch --prod && ng run ClientApp:server-aspnet:production",
-    "prerender": "ng run ClientApp:prerender"
+    "prerender": "ng run ClientApp:prerender",
+    "scully": "scully",
+    "scully:serve": "scully serve"
   },
   "private": true,
   "dependencies": {
@@ -28,6 +30,9 @@
     "@angular/platform-server": "~11.0.7",
     "@angular/router": "~11.0.7",
     "@nguniversal/express-engine": "^11.0.1",
+    "@scullyio/init": "^1.0.1",
+    "@scullyio/ng-lib": "^1.0.0",
+    "@scullyio/scully": "^1.0.0",
     "express": "^4.15.2",
     "jexcel": "^4.5.2",
     "jsuites": "^3.9.3",
