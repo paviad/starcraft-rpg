@@ -36,6 +36,7 @@
     "tslib": "^2.1.0",
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.0",
+    "xlsx": "^0.16.9",
     "zone.js": "~0.10.3"
   },
   "devDependencies": {

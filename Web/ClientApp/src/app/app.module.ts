@@ -14,6 +14,8 @@ import { VisjsDirective } from './visjs.directive';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 let currentBackendState: BackendState;
 
@@ -33,6 +35,8 @@ let currentBackendState: BackendState;
     AppRoutingModule,
     BrowserAnimationsModule,
     MatInputModule,
+    MatButtonModule,
+    MatIconModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },

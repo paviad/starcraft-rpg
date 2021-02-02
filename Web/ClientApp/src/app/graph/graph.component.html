@@ -1,7 +1,15 @@
 <mat-form-field class="example-full-width">
     <mat-label>Filter</mat-label>
     <input autocomplete="off" matInput placeholder="Filter..." #flt type="text" (input)="setFilter(flt.value)">
+    <button mat-button *ngIf="flt.value" matSuffix mat-icon-button aria-label="Clear"
+        (click)="flt.value=''; setFilter('')">
+        <mat-icon>close</mat-icon>
+    </button>
 </mat-form-field>
-<div id="mynetwork" #v="visjs" visjs [nodes]="nodes" [edges]="edges" [filter]="filter" (dblClickNode)="filterByNode($event)"></div>
+<div class="container">
+    <div id="mynetwork" #v="visjs" visjs [nodes]="nodes" [edges]="edges" [filter]="filter"
+        (dblClickNode)="filterByNode($event)" (drop)="drop($event)" (dragenter)="dragEnter($event)"
+        (dragover)="dragOver($event)"></div>
+    <div class="prompt"><div *ngIf="!nodes?.length">Drop an Excel File</div></div>
+</div>
 <button (click)="test()">test()</button>
-<div class="drop" (drop)="drop($event)" (dragenter)="dragEnter($event)" (dragover)="dragOver($event)"></div>

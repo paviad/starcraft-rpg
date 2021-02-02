@@ -63,6 +63,10 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
     if (changes.filter) {
       this.pipe.all();
       this.nodeView.refresh();
+      if (this.network) {
+        // this.network.stabilize();
+        this.network.fit();
+      }
     }
   }
 
@@ -75,6 +79,9 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
   }
 
   getFilterWords(): string[] {
+    if (!this.filter) {
+      return [];
+    }
     const words = this.filter.match(/\S{2,}|\d/ig);
     return words;
   }
@@ -106,9 +113,10 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
 
     const words = this.getFilterWords().map(r => r.toLowerCase());
 
-    const t = w => words.some(word => w.includes(word));
+    const tsome = w => words.some(word => w.includes(word));
+    const tall = w => words.every(word => w.includes(word));
 
-    if (t(lbl) || targetNodes.some(t) || sourceNodes.some(t)) {
+    if (tall(lbl) || targetNodes.some(tall) || sourceNodes.some(tall)) {
       return true;
     }
 
@@ -159,11 +167,19 @@ export class VisjsDirective implements AfterViewInit, OnChanges {
           damping: 0.09,
           avoidOverlap: 0
         },
+        // stabilization: {
+        //   updateInterval: 10,
+        //   fit: true,
+        // }
       }
     };
     this.network = new vis.Network(container, data, options);
 
     this.network.on('click', params => this.click(params));
+    // this.network.on('startStabilizing', params => {
+    //   console.log('progress', params);
+    //   return this.network.fit();
+    // });
   }
 
   click(params): void {

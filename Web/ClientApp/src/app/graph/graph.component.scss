@@ -1,11 +1,30 @@
 #mynetwork {
-    width: 1200px;
-    height: 600px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     border: 1px solid lightgray;
 }
 
-.drop {
-    width: 400px;
-    height: 400px;
-    background-color: grey;
+.container {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 57px);
+}
+
+.prompt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    div {
+        font-size: 100px;
+    }
 }
